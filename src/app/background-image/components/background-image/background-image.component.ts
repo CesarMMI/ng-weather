@@ -1,7 +1,7 @@
-import { Component, inject } from '@angular/core';
-import { ImageService } from '../services/image/image.service';
 import { AsyncPipe } from '@angular/common';
+import { Component, inject } from '@angular/core';
 import { map } from 'rxjs';
+import { ImageService } from './../../services/image.service';
 
 @Component({
   selector: 'app-background-image',

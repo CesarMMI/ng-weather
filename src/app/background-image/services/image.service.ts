@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { RandomImageRequest, RandomImageResponse } from './types/random-image';
+import { RandomImageRequest, RandomImageResponse } from '../types/random-image';
 
 @Injectable({
   providedIn: 'root',

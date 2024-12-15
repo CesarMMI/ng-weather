@@ -1,14 +1,13 @@
-import { AsyncPipe, JsonPipe } from '@angular/common';
-import { Component, inject } from '@angular/core';
-import { WeatherService } from './services/weather/weather.service';
-import { BackgroundImageComponent } from './background-image/background-image.component';
-import { WeatherCardComponent } from "./weather-card/weather-card.component";
+import { Component } from '@angular/core';
+import { BackgroundImageComponent } from './background-image/components/background-image/background-image.component';
+import { WeatherCardComponent } from './weather-card/components/weather-card/weather-card.component';
 
 @Component({
   selector: 'app-root',
   imports: [BackgroundImageComponent, WeatherCardComponent],
-  templateUrl: './app.component.html',
-  styleUrl: './app.component.scss',
+  template: `
+    <app-background-image />
+    <app-weather-card />
+  `,
 })
-export class AppComponent {
-}
+export class AppComponent {}

@@ -1,6 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { Component, inject } from '@angular/core';
-import { WeatherService } from '../services/weather/weather.service';
+import { WeatherService } from '../../services/weather.service';
 
 @Component({
   selector: 'app-weather-card',

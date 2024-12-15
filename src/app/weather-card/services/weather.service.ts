@@ -2,10 +2,10 @@ import { HttpClient } from '@angular/common/http';
 import { computed, inject, Injectable } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { filter, switchMap } from 'rxjs';
-import { GeolocationService } from '../geolocation.service';
+import { GeolocationService } from '../../weather-card/services/geolocation.service';
 import {
   WeatherCurrentResponse
-} from './types/weather-current';
+} from './../types/weather-current';
 
 @Injectable({
   providedIn: 'root',
