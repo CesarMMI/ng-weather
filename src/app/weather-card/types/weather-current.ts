@@ -12,7 +12,7 @@ export type WeatherCurrentResponse = {
   wind: WeatherCurrentWind;
   rain: WeatherCurrentRain;
   clouds: WeatherCurrentClouds;
-  dt: number;
+  dt: Date;
   sys: WeatherCurrentSys;
   timezone: number;
   id: number;

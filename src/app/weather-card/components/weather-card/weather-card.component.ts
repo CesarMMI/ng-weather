@@ -1,22 +1,16 @@
-import { DatePipe } from '@angular/common';
-import { Component, inject } from '@angular/core';
-import { WeatherService } from '../../services/weather.service';
+import { Component } from '@angular/core';
+import { GlassmorphismDirective } from '../../../shared/directives/glassmorphism.directive';
+import { CurrentWeatherComponent } from '../current-weather/current-weather.component';
+import { LocationInputComponent } from '../location-input/location-input.component';
 
 @Component({
   selector: 'app-weather-card',
-  imports: [DatePipe],
+  imports: [
+    GlassmorphismDirective,
+    LocationInputComponent,
+    CurrentWeatherComponent,
+  ],
   templateUrl: './weather-card.component.html',
   styleUrl: './weather-card.component.scss',
 })
-export class WeatherCardComponent {
-  private weatherService = inject(WeatherService);
-  location = this.weatherService.location;
-  temp = this.weatherService.temp;
-
-  tempMode = [
-    { label: 'ºC', key: 'celsius' },
-    { label: 'ºF', key: 'fahrenheit' },
-    { label: 'K', key: 'kelvin' },
-  ];
-  currentTempMode: 'kelvin' | 'celsius' | 'fahrenheit' = 'celsius';
-}
+export class WeatherCardComponent {}

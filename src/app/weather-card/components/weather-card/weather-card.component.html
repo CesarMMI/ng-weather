@@ -1,33 +1,10 @@
 <div class="h-screen w-screen flex items-center justify-center p-4">
-  <div
+  <main
+    appGlassmorphism
+    class="grid gap-8 p-8"
     [style.width]="'min(500px, 90vw)'"
-    class="p-8 text-neutral-50 bg-neutral-900 rounded backdrop-filter backdrop-blur-xl bg-opacity-30 border border-neutral-400 shadow"
   >
-    <div class="flex justify-between">
-      @if (temp(); as temp) {
-      <div class="flex items-center gap-2">
-        <span class="text-8xl font-bold">{{ temp[currentTempMode] }}</span>
-        <div class="grid items-center">
-          @for (temp of tempMode; track $index) {
-          <span
-            class="text-md text-neutral-500 [&.active]:font-bold hover:text-neutral-50 [&.active]:text-neutral-50 cursor-pointer"
-            [class.active]="temp.key === currentTempMode"
-            (click)="currentTempMode = $any(temp.key)"
-          >
-            {{ temp.label }}
-          </span>
-          }
-        </div>
-      </div>
-      } @if (location() ; as location) {
-      <div class="flex flex-col items-end">
-        <span class="text-lg">
-          <span class="font-bold">{{ location.name }}</span>
-          / {{ location.country }}</span
-        >
-        <span>{{ location.date | date }}</span>
-      </div>
-      }
-    </div>
-  </div>
+    <app-location-input />
+    <app-current-weather />
+  </main>
 </div>
