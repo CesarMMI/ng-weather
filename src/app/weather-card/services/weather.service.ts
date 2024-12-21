@@ -6,15 +6,18 @@ import { WeatherCords } from '../types/weather';
 import { WeatherForecast, WeatherForecastList } from '../types/weather-forecast';
 import { WeatherCurrentResponse } from './../types/weather-current';
 import { LocationService } from './location.service';
+import { HttpService } from '../../shared/services/http.service';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
 	providedIn: 'root',
 })
-export class WeatherService {
-	private http = inject(HttpClient);
+export class WeatherService extends HttpService {
 	private locationService = inject(LocationService);
-	private baseUrl = 'https://api.openweathermap.org/data/2.5';
-	private appid = '';
+
+	private appid = environment.weatherApiKey;
+	protected override url = environment.weatherApiUrl;
+	protected override urlDebug = environment.weatherApiUrlDebug;
 	// States
 	private _current = signal<WeatherCurrentResponse | undefined>(undefined);
 	private _forecast = signal<WeatherForecast | undefined>(undefined);
@@ -38,6 +41,7 @@ export class WeatherService {
 	});
 
 	constructor() {
+		super();
 		// Reducers
 		this.locationService.searchLocation$
 			.pipe(
@@ -57,17 +61,11 @@ export class WeatherService {
 	}
 
 	private requestCurrent(search: WeatherCords) {
-		// return this.http.get<WeatherCurrentResponse>(this.baseUrl + '/weather', {
-		return this.http.get<WeatherCurrentResponse>('json/weather/current.json', {
-			params: { lat: search.lat, lon: search.lon, appid: this.appid },
-		});
+		return this.get<WeatherCurrentResponse>('weather', { lat: search.lat, lon: search.lon, appid: this.appid });
 	}
 
 	private requestForecast(search: WeatherCords) {
-		// return this.http.get<WeatherForecast>(this.baseUrl + '/forecast', {
-		return this.http.get<WeatherForecast>('json/weather/forecast.json', {
-			params: { lat: search.lat, lon: search.lon, appid: this.appid },
-		});
+		return this.get<WeatherForecast>('forecast', { lat: search.lat, lon: search.lon, appid: this.appid });
 	}
 
 	private calcTemps(tempKelvin: number) {
