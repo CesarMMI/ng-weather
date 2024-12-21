@@ -1,45 +1,45 @@
 {
   "coord": {
-    "lon": -46.6387,
-    "lat": -23.5799
+    "lon": -46.6396,
+    "lat": -23.5558
   },
   "weather": [
     {
       "id": 803,
       "main": "Clouds",
       "description": "broken clouds",
-      "icon": "04n"
+      "icon": "04d"
     }
   ],
   "base": "stations",
   "main": {
-    "temp": 293.31,
-    "feels_like": 293.73,
-    "temp_min": 292.63,
-    "temp_max": 293.88,
-    "pressure": 1008,
-    "humidity": 90,
-    "sea_level": 1008,
-    "grnd_level": 919
+    "temp": 299.94,
+    "feels_like": 301.66,
+    "temp_min": 299.05,
+    "temp_max": 300.58,
+    "pressure": 1012,
+    "humidity": 70,
+    "sea_level": 1012,
+    "grnd_level": 924
   },
   "visibility": 10000,
   "wind": {
-    "speed": 4.63,
-    "deg": 340
+    "speed": 3.6,
+    "deg": 330
   },
   "clouds": {
     "all": 75
   },
-  "dt": 1734231367,
+  "dt": 1734789586,
   "sys": {
-    "type": 2,
-    "id": 2033898,
+    "type": 1,
+    "id": 8446,
     "country": "BR",
-    "sunrise": 1734164056,
-    "sunset": 1734212925
+    "sunrise": 1734769034,
+    "sunset": 1734817947
   },
   "timezone": -10800,
-  "id": 3461570,
-  "name": "Ibirapuera",
+  "id": 3458611,
+  "name": "Liberdade",
   "cod": 200
 }

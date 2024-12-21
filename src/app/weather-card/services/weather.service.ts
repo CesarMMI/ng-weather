@@ -1,66 +1,130 @@
 import { HttpClient } from '@angular/common/http';
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { distinctUntilChanged, filter, switchMap } from 'rxjs';
-import { LocationService } from './location.service';
-import { SearchLocation } from '../types/search-location';
+import { filter, forkJoin, switchMap } from 'rxjs';
+import { WeatherCords } from '../types/weather';
+import { WeatherForecast, WeatherForecastList } from '../types/weather-forecast';
 import { WeatherCurrentResponse } from './../types/weather-current';
+import { LocationService } from './location.service';
 
 @Injectable({
-  providedIn: 'root',
+	providedIn: 'root',
 })
 export class WeatherService {
-  private http = inject(HttpClient);
-  private locationService = inject(LocationService);
-  // States
-  private _weather = signal<WeatherCurrentResponse | undefined>(undefined);
-  // Getters
-  readonly weather = computed(() => {
-    const weather = this._weather();
-    if (!weather) return;
-    return {
-      temps: this.calcTemps(weather.main.temp),
-      clouds: weather.clouds.all,
-      humidity: weather.main.humidity,
-      wind: Math.round(weather.wind.speed * 3.6),
-    };
-  });
+	private http = inject(HttpClient);
+	private locationService = inject(LocationService);
+	private baseUrl = 'https://api.openweathermap.org/data/2.5';
+	private appid = '';
+	// States
+	private _current = signal<WeatherCurrentResponse | undefined>(undefined);
+	private _forecast = signal<WeatherForecast | undefined>(undefined);
+	// Getters
+	readonly current = computed(() => {
+		const weather = this._current();
+		if (!weather) return;
+		return {
+			temps: this.calcTemps(weather.main.temp),
+			clouds: weather.clouds.all,
+			humidity: weather.main.humidity,
+			wind: Math.round(weather.wind.speed * 3.6),
+		};
+	});
+	readonly next = computed(() => {
+		const forecast = this._forecast();
+		if (!forecast) return;
+		const groups = this.groupForecast(forecast);
+		return this.calcGroupForecastMedian(groups);
+		return this.calcGroupForecastAverage(groups);
+	});
 
-  constructor() {
-    // Reducers
-    this.locationService.searchLocation$
-      .pipe(
-        takeUntilDestroyed(),
-        filter(Boolean),
-        distinctUntilChanged((prev, curr) => {
-          return prev.lat === curr.lat || prev.lon === curr.lon;
-        }),
-        switchMap((search) => this.requestCurrent(search))
-      )
-      .subscribe((res) => {
-        this._weather.set({ ...res, dt: new Date(res.dt) });
-        this.locationService.setLocation({
-          name: res.name,
-          country: res.sys.country,
-        });
-      });
-  }
+	constructor() {
+		// Reducers
+		this.locationService.searchLocation$
+			.pipe(
+				takeUntilDestroyed(),
+				filter(Boolean),
+				switchMap((search) =>
+					forkJoin({ current: this.requestCurrent(search), forecast: this.requestForecast(search) })
+				)
+			)
+			.subscribe((res) => {
+				// Current
+				this._current.set({ ...res.current, dt: new Date(res.current.dt) });
+				this._forecast.set(res.forecast);
+				// Forecast
+				this.locationService.setLocation({ name: res.current.name, country: res.current.sys.country });
+			});
+	}
 
-  private requestCurrent(search: SearchLocation) {
-    return this.http.get<WeatherCurrentResponse>('json/weather/current.json', {
-      params: {
-        lat: search.lat,
-        lon: search.lon,
-        appid: 'appid',
-      },
-    });
-  }
+	private requestCurrent(search: WeatherCords) {
+		// return this.http.get<WeatherCurrentResponse>(this.baseUrl + '/weather', {
+		return this.http.get<WeatherCurrentResponse>('json/weather/current.json', {
+			params: { lat: search.lat, lon: search.lon, appid: this.appid },
+		});
+	}
 
-  private calcTemps(tempKelvin: number) {
-    return {
-      kelvin: Math.trunc(tempKelvin),
-      celsius: Math.trunc(tempKelvin - 273.15),
-      fahrenheit: Math.trunc(((tempKelvin - 273.15) * 9) / 5 + 32),
-    };
-  }
+	private requestForecast(search: WeatherCords) {
+		// return this.http.get<WeatherForecast>(this.baseUrl + '/forecast', {
+		return this.http.get<WeatherForecast>('json/weather/forecast.json', {
+			params: { lat: search.lat, lon: search.lon, appid: this.appid },
+		});
+	}
+
+	private calcTemps(tempKelvin: number) {
+		return {
+			celsius: Math.trunc(tempKelvin - 273.15),
+			fahrenheit: Math.trunc(((tempKelvin - 273.15) * 9) / 5 + 32),
+		};
+	}
+
+	private groupForecast(forecast: WeatherForecast) {
+		const groups: Record<string, WeatherForecastList[]> = {};
+		const today = new Date().getDate();
+		for (const item of forecast.list) {
+			const date = new Date(item.dt * 1000);
+			if (date.getDate() === today) continue;
+
+			const key = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
+			if (!groups[key]) {
+				groups[key] = [];
+			}
+			groups[key].push(item);
+		}
+		return groups;
+	}
+
+	private calcGroupForecastAverage(groups: Record<string, WeatherForecastList[]>) {
+		const results: { date: string; temp: { celsius: number; fahrenheit: number } }[] = [];
+
+		for (const [key, group] of Object.entries(groups)) {
+			const tempSum = group.reduce((sum, item) => sum + item.main.temp, 0);
+			const avgTemp = tempSum / group.length;
+			const result = { date: key, temp: this.calcTemps(avgTemp) };
+			results.push(result);
+		}
+
+		return results;
+	}
+
+	private calcGroupForecastMedian(groups: Record<string, WeatherForecastList[]>) {
+		const results: { date: string; temp: { celsius: number; fahrenheit: number } }[] = [];
+
+		for (const [key, group] of Object.entries(groups)) {
+			const temps = group.map((item) => item.main.temp);
+			const medianTemp = this.calcMedian(temps);
+			const result = { date: key, temp: this.calcTemps(medianTemp) };
+			results.push(result);
+		}
+
+		return results;
+	}
+
+	private calcMedian(values: number[]): number {
+		if (values.length === 0) return 0;
+
+		const sorted = values.slice().sort((a, b) => a - b);
+		const mid = Math.floor(sorted.length / 2);
+
+		return sorted.length % 2 !== 0 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2;
+	}
 }

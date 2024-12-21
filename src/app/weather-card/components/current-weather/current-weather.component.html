@@ -7,7 +7,7 @@
     <div class="grid gap-1">
       @for (tempMode of tempModes(); track $index) {
       <div
-        class="self-center text-right cursor-pointer transition-colors text-neutral-500 hover:text-neutral-300 [&.active]:text-neutral-100 [&.active]:text-xl"
+        class="self-center text-lg text-right cursor-pointer transition-colors text-neutral-500 hover:text-neutral-300 [&.active]:text-neutral-100 [&.active]:text-xl"
         [class.active]="currentTempMode() === tempMode.key"
         (click)="currentTempMode.set($any(tempMode.key))"
       >

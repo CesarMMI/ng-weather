@@ -1,17 +1,22 @@
-export type WeatherCurrentRequest = {
-  lat: number;
-  lon: number;
-};
+import {
+  Weather,
+  WeatherCity,
+  WeatherClouds,
+  WeatherCords,
+  WeatherMain,
+  WeatherRain,
+  WeatherWind,
+} from './weather';
 
 export type WeatherCurrentResponse = {
-  coord: WeatherCurrentCoord;
-  weather: WeatherCurrentWeather[];
+  coord: WeatherCords;
+  weather: Weather[];
   base: string;
-  main: WeatherCurrentMain;
+  main: WeatherMain;
   visibility: number;
-  wind: WeatherCurrentWind;
-  rain: WeatherCurrentRain;
-  clouds: WeatherCurrentClouds;
+  wind: WeatherWind;
+  rain: WeatherRain;
+  clouds: WeatherClouds;
   dt: Date;
   sys: WeatherCurrentSys;
   timezone: number;
@@ -20,47 +25,6 @@ export type WeatherCurrentResponse = {
   cod: number;
 };
 
-export interface WeatherCurrentCoord {
-  lon: number;
-  lat: number;
-}
-
-export interface WeatherCurrentWeather {
-  id: number;
-  main: string;
-  description: string;
-  icon: string;
-}
-
-export interface WeatherCurrentMain {
-  temp: number;
-  feels_like: number;
-  temp_min: number;
-  temp_max: number;
-  pressure: number;
-  humidity: number;
-  sea_level: number;
-  grnd_level: number;
-}
-
-export interface WeatherCurrentWind {
-  speed: number;
-  deg: number;
-  gust: number;
-}
-
-export interface WeatherCurrentRain {
-  '1h': number;
-}
-
-export interface WeatherCurrentClouds {
-  all: number;
-}
-
-export interface WeatherCurrentSys {
+export type WeatherCurrentSys = WeatherCity & {
   type: number;
-  id: number;
-  country: string;
-  sunrise: number;
-  sunset: number;
-}
+};

@@ -1,0 +1,10 @@
+<div [style.gridTemplateColumns]="gridTemplateColumns()" class="grid">
+	@for (weather of next(); track $index; let last=$last) {
+	<div class="grid">
+		<span class="text-neutral-300">{{ weather.date | date : "EE" }}</span>
+		<span class="text-right text-lg font-semibold" >{{ weather.temp.celsius }}</span>
+	</div>
+	@if(!last){
+	<div class="w-[1px] h-100 mx-auto bg-neutral-500"></div>
+	} }
+</div>

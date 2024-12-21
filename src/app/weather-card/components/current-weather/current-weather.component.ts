@@ -9,13 +9,12 @@ import { WeatherService } from '../../services/weather.service';
 })
 export class CurrentWeatherComponent {
   private weatherService = inject(WeatherService);
-  weather = this.weatherService.weather;
+  weather = this.weatherService.current;
 
   tempModes = computed(() =>
     [
       { label: 'ºC', key: 'celsius' },
       { label: 'ºF', key: 'fahrenheit' },
-      { label: 'K', key: 'kelvin' },
     ].sort((a, b) => {
       const currentTempMode = this.currentTempMode();
       if (a.key === currentTempMode) return -1;
@@ -23,5 +22,5 @@ export class CurrentWeatherComponent {
       return 0;
     })
   );
-  currentTempMode = signal<'kelvin' | 'celsius' | 'fahrenheit'>('celsius');
+  currentTempMode = signal<'celsius' | 'fahrenheit'>('celsius');
 }
