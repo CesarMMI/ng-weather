@@ -1,8 +1,9 @@
 import { DatePipe } from '@angular/common';
 import { Component, computed, inject } from '@angular/core';
-import { ChartConfiguration, ChartData, ChartOptions } from 'chart.js';
+import { ChartConfiguration, ChartData, ChartOptions, TooltipItem } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
 import { WeatherService } from '../../services/weather.service';
+import { Forecast } from '../../types/forecast';
 
 @Component({
 	selector: 'app-next-weathers',
@@ -15,48 +16,67 @@ export class NextWeathersComponent {
 	private datePipe = inject(DatePipe);
 	private weatherService = inject(WeatherService);
 
-	private next = this.weatherService.next;
+	private forecast = this.weatherService.forecast;
 
 	chart = computed(() => {
-		const next = this.next();
-		if (!next) return;
+		const forecast = this.forecast();
+		if (!forecast) return;
 		return {
-			data: this.getChartData(next),
-			options: this.getChartOptions(next),
+			data: this.getChartData(forecast),
+			options: this.getChartOptions(forecast),
 		} as ChartConfiguration;
 	});
 
-	private getChartData(next: { dt: Date; temp: number }[]) {
+	private getChartData(forecast: Forecast) {
 		return {
-			labels: next.map((item) => item.dt),
+			labels: forecast.map((item) => item.date),
 			datasets: [
 				{
 					xAxisID: 'x',
 					yAxisID: 'y',
+					tension: 0.5,
 					pointRadius: 0,
 					borderWidth: 2,
 					borderColor: '#d4d4d4',
-					data: next.map((item) => item.temp),
+					data: forecast.map((item) => item.temperature.value),
 				},
 			],
 		} as ChartData;
 	}
 
-	private getChartOptions(next: { dt: Date; temp: number }[]) {
+	private getChartOptions(forecast: Forecast) {
+		const temperatures = forecast.map((item) => item.temperature.value!);
 		return {
+			responsive: true,
+			maintainAspectRatio: false,
 			layout: { padding: 0 },
-			plugins: { legend: { display: false } },
+			plugins: {
+				legend: { display: false },
+				tooltip: {
+					displayColors: false,
+					callbacks: {
+						label: this.getTooltipLabel(forecast),
+						title: this.getTooltipTitle(),
+					},
+				},
+			},
 			interaction: { mode: 'index', intersect: false },
 			scales: {
 				x: {
 					border: { display: false },
 					backgroundColor: 'transparent',
 					position: 'top',
-					grid: { color: '#73737355' },
-					ticks: { callback: this.getXTick(next), color: '#d4d4d4' },
+					grid: { color: '#525252' },
+					ticks: {
+						color: '#d4d4d4',
+						callback: this.getXTick(forecast),
+					},
 				},
 				y: {
 					display: false,
+					beginAtZero: false,
+					min: Math.min(...temperatures) - 2,
+					max: Math.max(...temperatures) + 2,
 					grid: { display: false },
 					ticks: { display: false },
 				},
@@ -64,11 +84,23 @@ export class NextWeathersComponent {
 		} as ChartOptions;
 	}
 
-	private getXTick(next: { dt: Date; temp: number }[]) {
+	private getXTick(forecast: Forecast) {
 		return (tickValue: number, index: number) => {
-			const date = next[index].dt;
+			const date = forecast[index].date;
 			if (date.getHours() !== 0) return;
 			return this.datePipe.transform(date, 'EE');
+		};
+	}
+
+	private getTooltipLabel(forecast: Forecast) {
+		return (tooltipItem: TooltipItem<'line'>) => {
+			return `${tooltipItem.raw} ${forecast[tooltipItem.dataIndex].temperature.symbol}`;
+		};
+	}
+
+	private getTooltipTitle() {
+		return (tooltipItems: TooltipItem<'line'>[]) => {
+			return tooltipItems.map((item) => this.datePipe.transform(item.label, 'short'));
 		};
 	}
 }

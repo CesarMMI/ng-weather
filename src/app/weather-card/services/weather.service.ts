@@ -1,13 +1,14 @@
-import { HttpClient } from '@angular/common/http';
-import { computed, inject, Injectable, signal } from '@angular/core';
+import { computed, inject, Injectable, Signal, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { filter, forkJoin, switchMap } from 'rxjs';
-import { WeatherCords } from '../types/weather';
-import { WeatherForecast, WeatherForecastList } from '../types/weather-forecast';
-import { WeatherCurrentResponse } from './../types/weather-current';
-import { LocationService } from './location.service';
-import { HttpService } from '../../shared/services/http.service';
 import { environment } from '../../../environments/environment';
+import { HttpService } from '../../shared/services/http.service';
+import { Forecast } from '../types/forecast';
+import { Temperature } from '../types/temperature';
+import { WeatherApiCords } from '../types/weather-api/weather-api';
+import { WeatherApiCurrentResponse } from '../types/weather-api/weather-api-current';
+import { WeatherApiForecastResponse } from '../types/weather-api/weather-api-forecast';
+import { LocationService } from './location.service';
 
 @Injectable({
 	providedIn: 'root',
@@ -19,10 +20,11 @@ export class WeatherService extends HttpService {
 	protected override url = environment.weatherApiUrl;
 	protected override urlDebug = environment.weatherApiUrlDebug;
 	// States
-	private _current = signal<WeatherCurrentResponse | undefined>(undefined);
-	private _forecast = signal<WeatherForecast | undefined>(undefined);
+	private _current = signal<WeatherApiCurrentResponse | undefined>(undefined);
+	private _forecast = signal<WeatherApiForecastResponse | undefined>(undefined);
+	private _temperature = signal<Temperature>(new Temperature('celsius'));
 	// Getters
-	readonly current = computed(() => {
+	current = computed(() => {
 		const weather = this._current();
 		if (!weather) return;
 		return {
@@ -32,10 +34,10 @@ export class WeatherService extends HttpService {
 			wind: Math.round(weather.wind.speed * 3.6),
 		};
 	});
-	readonly next = computed(() => {
+	forecast: Signal<Forecast | undefined> = computed(() => {
 		const forecast = this._forecast();
 		if (!forecast) return;
-		return this.getForecastList(forecast);
+		return this.getForecastList(forecast, this._temperature());
 	});
 
 	constructor() {
@@ -58,12 +60,12 @@ export class WeatherService extends HttpService {
 			});
 	}
 
-	private requestCurrent(search: WeatherCords) {
-		return this.get<WeatherCurrentResponse>('weather', { lat: search.lat, lon: search.lon, appid: this.appid });
+	private requestCurrent(search: WeatherApiCords) {
+		return this.get<WeatherApiCurrentResponse>('weather', { lat: search.lat, lon: search.lon, appid: this.appid });
 	}
 
-	private requestForecast(search: WeatherCords) {
-		return this.get<WeatherForecast>('forecast', { lat: search.lat, lon: search.lon, appid: this.appid });
+	private requestForecast(search: WeatherApiCords) {
+		return this.get<WeatherApiForecastResponse>('forecast', { lat: search.lat, lon: search.lon, appid: this.appid });
 	}
 
 	private calcTemps(tempKelvin: number) {
@@ -73,7 +75,16 @@ export class WeatherService extends HttpService {
 		};
 	}
 
-	private getForecastList(forecast: WeatherForecast) {
-		return forecast.list.map((item) => ({ temp: item.main.temp, dt: new Date(item.dt * 1000) }));
+	private getForecastList(forecast: WeatherApiForecastResponse, temperature: Temperature) {
+		const result: Forecast = [];
+
+		for (const item of forecast.list) {
+			result.push({
+				date: new Date(item.dt * 1000),
+				temperature: new Temperature(temperature.type, item.main.temp),
+			});
+		}
+
+		return result;
 	}
 }

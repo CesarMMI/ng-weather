@@ -11,7 +11,7 @@ import { Directive } from '@angular/core';
     backdrop-filter
     backdrop-blur-xl
     border
-    border-neutral-500
+    border-neutral-600
   `,
   },
 })

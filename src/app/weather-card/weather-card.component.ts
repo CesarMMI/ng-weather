@@ -9,9 +9,9 @@ import { NextWeathersComponent } from './components/next-weathers/next-weathers.
 	imports: [GlassmorphismDirective, LocationInputComponent, CurrentWeatherComponent, NextWeathersComponent],
 	template: `
 		<div class="h-screen w-screen flex items-center justify-center">
-			<main appGlassmorphism class="grid gap-12" [style.width]="'min(500px, 90vw)'">
-				<app-location-input class="px-4 pt-4" />
-				<app-current-weather class="px-8" />
+			<main appGlassmorphism class="grid gap-4" [style.width]="'min(500px, 90vw)'">
+				<app-location-input />
+				<app-current-weather />
 				<app-next-weathers />
 			</main>
 		</div>
