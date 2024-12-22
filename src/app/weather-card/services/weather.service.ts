@@ -35,9 +35,7 @@ export class WeatherService extends HttpService {
 	readonly next = computed(() => {
 		const forecast = this._forecast();
 		if (!forecast) return;
-		const groups = this.groupForecast(forecast);
-		return this.calcGroupForecastMedian(groups);
-		return this.calcGroupForecastAverage(groups);
+		return this.getForecastList(forecast);
 	});
 
 	constructor() {
@@ -75,54 +73,7 @@ export class WeatherService extends HttpService {
 		};
 	}
 
-	private groupForecast(forecast: WeatherForecast) {
-		const groups: Record<string, WeatherForecastList[]> = {};
-		const today = new Date().getDate();
-		for (const item of forecast.list) {
-			const date = new Date(item.dt * 1000);
-			if (date.getDate() === today) continue;
-
-			const key = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
-			if (!groups[key]) {
-				groups[key] = [];
-			}
-			groups[key].push(item);
-		}
-		return groups;
-	}
-
-	private calcGroupForecastAverage(groups: Record<string, WeatherForecastList[]>) {
-		const results: { date: string; temp: { celsius: number; fahrenheit: number } }[] = [];
-
-		for (const [key, group] of Object.entries(groups)) {
-			const tempSum = group.reduce((sum, item) => sum + item.main.temp, 0);
-			const avgTemp = tempSum / group.length;
-			const result = { date: key, temp: this.calcTemps(avgTemp) };
-			results.push(result);
-		}
-
-		return results;
-	}
-
-	private calcGroupForecastMedian(groups: Record<string, WeatherForecastList[]>) {
-		const results: { date: string; temp: { celsius: number; fahrenheit: number } }[] = [];
-
-		for (const [key, group] of Object.entries(groups)) {
-			const temps = group.map((item) => item.main.temp);
-			const medianTemp = this.calcMedian(temps);
-			const result = { date: key, temp: this.calcTemps(medianTemp) };
-			results.push(result);
-		}
-
-		return results;
-	}
-
-	private calcMedian(values: number[]): number {
-		if (values.length === 0) return 0;
-
-		const sorted = values.slice().sort((a, b) => a - b);
-		const mid = Math.floor(sorted.length / 2);
-
-		return sorted.length % 2 !== 0 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2;
+	private getForecastList(forecast: WeatherForecast) {
+		return forecast.list.map((item) => ({ temp: item.main.temp, dt: new Date(item.dt * 1000) }));
 	}
 }
