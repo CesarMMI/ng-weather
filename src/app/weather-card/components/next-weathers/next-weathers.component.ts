@@ -27,7 +27,7 @@ export class NextWeathersComponent {
 		} as ChartConfiguration;
 	});
 
-	private getChartData(forecast: Forecast) {
+	private getChartData(forecast: Forecast[]) {
 		return {
 			labels: forecast.map((item) => item.date),
 			datasets: [
@@ -44,7 +44,7 @@ export class NextWeathersComponent {
 		} as ChartData;
 	}
 
-	private getChartOptions(forecast: Forecast) {
+	private getChartOptions(forecast: Forecast[]) {
 		const temperatures = forecast.map((item) => item.temperature.value!);
 		return {
 			responsive: true,
@@ -84,7 +84,7 @@ export class NextWeathersComponent {
 		} as ChartOptions;
 	}
 
-	private getXTick(forecast: Forecast) {
+	private getXTick(forecast: Forecast[]) {
 		return (tickValue: number, index: number) => {
 			const date = forecast[index].date;
 			if (date.getHours() !== 0) return;
@@ -92,7 +92,7 @@ export class NextWeathersComponent {
 		};
 	}
 
-	private getTooltipLabel(forecast: Forecast) {
+	private getTooltipLabel(forecast: Forecast[]) {
 		return (tooltipItem: TooltipItem<'line'>) => {
 			return `${tooltipItem.raw} ${forecast[tooltipItem.dataIndex].temperature.symbol}`;
 		};

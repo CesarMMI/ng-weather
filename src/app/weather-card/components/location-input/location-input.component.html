@@ -1,9 +1,11 @@
-<div class="px-4 pt-4">
+<div class="flex items-center gap-4">
 	<input
 		type="text"
 		name="location"
 		id="location"
-		class="px-2 py-1 text-lg outline-none bg-transparent text-neutral-50 border-b border-neutral-500 focus:border-neutral-300 transition-colors"
+		class="flex-1 px-2 text-lg outline-none bg-transparent text-neutral-50 border-b border-neutral-500 focus:border-neutral-300 transition-colors"
 		[value]="location()"
 	/>
+	<button appIconButton>search</button>
+	<button appIconButton>my_location</button>
 </div>

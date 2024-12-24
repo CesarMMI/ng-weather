@@ -1,6 +1,8 @@
 import { Temperature } from './temperature';
 
 export type Weather = {
-	date: Date;
+	clouds: number;
+	humidity: number;
 	temperature: Temperature;
+	wind: number;
 };

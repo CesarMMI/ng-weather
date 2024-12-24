@@ -1,3 +1,6 @@
-import { Weather } from './weather';
+import { Temperature } from './temperature';
 
-export type Forecast = Weather[];
+export type Forecast = {
+	date: Date;
+	temperature: Temperature;
+};

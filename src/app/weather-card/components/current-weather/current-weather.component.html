@@ -1,43 +1,43 @@
 @if (weather();as weather) {
-<div class="flex justify-between px-6 pb-6 h-full">
+<div class="flex justify-between items-center h-full">
 	<div class="flex items-center gap-2">
 		<span class="text-8xl font-semibold">
-			{{ weather.temps[currentTempMode()] }}
+			{{ weather.temperature.value }}
 		</span>
 		<div class="grid gap-1">
-			@for (tempMode of tempModes(); track $index) {
 			<div
 				class="self-center text-lg text-right cursor-pointer transition-colors text-neutral-500 hover:text-neutral-200 [&.active]:text-neutral-100 [&.active]:text-xl"
-				[class.active]="currentTempMode() === tempMode.key"
-				(click)="currentTempMode.set($any(tempMode.key))"
+				[class.active]="temperatureType() === 'celsius'"
+				(click)="setTemperatureType('celsius')"
 			>
-				{{ tempMode.label }}
+				ºC
 			</div>
-			}
+			<div
+				class="self-center text-lg text-right cursor-pointer transition-colors text-neutral-500 hover:text-neutral-200 [&.active]:text-neutral-100 [&.active]:text-xl"
+				[class.active]="temperatureType() === 'fahrenheit'"
+				(click)="setTemperatureType('fahrenheit')"
+			>
+				ºF
+			</div>
 		</div>
 	</div>
-	<table>
-		<tr>
-			<td class="text-neutral-300">Nuvens</td>
-			<td class="text-right">
-				<span class="font-semibold text-lg mr-1">{{ weather.clouds }}</span>
-				<span class="text-neutral-300">%</span>
-			</td>
-		</tr>
-		<tr>
-			<td class="text-neutral-300">Humidade</td>
-			<td class="text-right">
-				<span class="font-semibold text-lg mr-1">{{ weather.humidity }}</span>
-				<span class="text-neutral-300">%</span>
-			</td>
-		</tr>
-		<tr>
-			<td class="text-neutral-300">Vento</td>
-			<td class="text-right">
-				<span class="font-semibold text-lg mr-1">{{ weather.wind }}</span>
-				<span class="text-neutral-300">Km/h</span>
-			</td>
-		</tr>
-	</table>
+	<div class="grid grid-cols-2">
+		<span class="text-neutral-300">Nuvens</span>
+		<span class="text-right">
+			<span class="font-semibold text-lg mr-1">{{ weather.clouds }}</span>
+			<span class="text-neutral-300">%</span>
+		</span>
+
+		<span class="text-neutral-300">Humidade</span>
+		<span class="text-right">
+			<span class="font-semibold text-lg mr-1">{{ weather.humidity }}</span>
+			<span class="text-neutral-300">%</span>
+		</span>
+		<span class="text-neutral-300">Vento</span>
+		<span class="text-right">
+			<span class="font-semibold text-lg mr-1">{{ weather.wind }}</span>
+			<span class="text-neutral-300">Km/h</span>
+		</span>
+	</div>
 </div>
 }
