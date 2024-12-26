@@ -13,11 +13,9 @@ export abstract class HttpService {
 
 	constructor() {}
 
-	get<T>(endpoint: string, params: { [prop: string]: any }) {
-		let url = `${this.url}/${endpoint}`;
-		if (environment.debug) {
-			url = `${this.urlDebug}/${endpoint}.json`;
-		}
+	protected get<T>(endpoint: string, params: { [prop: string]: any }) {
+		let url = this.url + endpoint;
+		if (environment.debug) url = this.urlDebug + endpoint + '.json';
 		return this.http.get<T>(url, { params });
 	}
 }

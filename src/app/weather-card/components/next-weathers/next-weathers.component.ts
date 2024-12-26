@@ -3,7 +3,7 @@ import { Component, computed, inject } from '@angular/core';
 import { ChartConfiguration, ChartData, ChartOptions, TooltipItem } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
 import { WeatherService } from '../../services/weather.service';
-import { Forecast } from '../../types/forecast';
+import { Forecast } from '../../types/weather/forecast';
 
 @Component({
 	selector: 'app-next-weathers',
@@ -88,7 +88,8 @@ export class NextWeathersComponent {
 		return (tickValue: number, index: number) => {
 			const date = forecast[index].date;
 			if (date.getHours() !== 0) return;
-			return this.datePipe.transform(date, 'EE');
+			const transformed = this.datePipe.transform(date, 'EE');
+			return `${transformed?.charAt(0).toLocaleUpperCase()}${transformed?.substring(1)}`;
 		};
 	}
 

@@ -4,8 +4,8 @@
 		name="location"
 		id="location"
 		class="flex-1 px-2 text-lg outline-none bg-transparent text-neutral-50 border-b border-neutral-500 focus:border-neutral-300 transition-colors"
-		[value]="location()"
+		[value]="locationName()"
 	/>
 	<button appIconButton>search</button>
-	<button appIconButton>my_location</button>
+	<button appIconButton (click)="requestBrowserLocation()">my_location</button>
 </div>

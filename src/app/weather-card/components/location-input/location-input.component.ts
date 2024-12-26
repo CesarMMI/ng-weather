@@ -11,9 +11,9 @@ import { LocationService } from '../../services/location.service';
 export class LocationInputComponent {
 	private geolocationService = inject(LocationService);
 
-	location = computed(() => {
-		const geolocation = this.geolocationService.location();
-		if (!geolocation) return;
-		return `${geolocation?.name} / ${geolocation?.country}`;
-	});
+	locationName = this.geolocationService.locationName;
+
+	requestBrowserLocation() {
+		this.geolocationService.setNavigatorGeolocation();
+	}
 }

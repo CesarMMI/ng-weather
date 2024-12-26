@@ -1,6 +1,6 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { WeatherService } from '../../services/weather.service';
-import { TemperatureType } from '../../types/temperature';
+import { TemperatureType } from '../../types/weather/temperature';
 
 @Component({
 	selector: 'app-current-weather',
@@ -10,7 +10,7 @@ import { TemperatureType } from '../../types/temperature';
 })
 export class CurrentWeatherComponent {
 	private weatherService = inject(WeatherService);
-	weather = this.weatherService.weather;
+	weather = this.weatherService.current;
 	temperatureType = this.weatherService.temperatureType;
 
 	setTemperatureType(type: TemperatureType) {
