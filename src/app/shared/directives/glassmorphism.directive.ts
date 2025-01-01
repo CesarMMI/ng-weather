@@ -6,10 +6,10 @@ import { Directive } from '@angular/core';
     class: `
     rounded-xl
     text-neutral-50
-    bg-neutral-900
+    bg-neutral-950
     bg-opacity-20
     backdrop-filter
-    backdrop-blur-xl
+    backdrop-blur-lg
     border
     border-neutral-600
   `,

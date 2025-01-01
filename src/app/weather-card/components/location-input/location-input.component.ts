@@ -9,11 +9,20 @@ import { LocationService } from '../../services/location.service';
 	styleUrl: './location-input.component.scss',
 })
 export class LocationInputComponent {
-	private geolocationService = inject(LocationService);
+	private locationService = inject(LocationService);
 
-	locationName = this.geolocationService.locationName;
+	locationName = this.locationService.locationName;
+
+	onKeyDown(event: KeyboardEvent, inputValue: string) {
+		if (event.key !== 'Enter' || !inputValue) return;
+		this.searchLocation(inputValue);
+	}
 
 	requestBrowserLocation() {
-		this.geolocationService.setNavigatorGeolocation();
+		this.locationService.setNavigatorGeolocation();
+	}
+
+	searchLocation(inputValue: string) {
+		this.locationService.searchLocation(inputValue);
 	}
 }

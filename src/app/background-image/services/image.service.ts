@@ -30,7 +30,6 @@ export class ImageService extends HttpService {
 			switchMap((weather) => this.getRandom(this.getQuery(weather!))),
 			takeUntilDestroyed()
 		).subscribe((res) => {
-			console.log(res,res.urls.regular)
 			this._imageUrl.set(res.urls.regular);
 		});
 	}

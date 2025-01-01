@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { map, Observable, throwError } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { HttpService } from '../../shared/services/http.service';
 import { WeatherApiCords } from '../types/weather-api/weather-api';
 import { WeatherApiCurrentResponse } from '../types/weather-api/weather-api-current';
 import { WeatherApiForecastResponse } from '../types/weather-api/weather-api-forecast';
+import { WeatherApiLocationResponse } from '../types/weather-api/weather-api-location';
 
 @Injectable({
 	providedIn: 'root',
@@ -29,15 +30,19 @@ export class WeatherApiService extends HttpService {
 	}
 
 	getLocation(query: string) {
-		return this.get<WeatherApiForecastResponse>('/geo/1.0/direct', {
+		return this.get<WeatherApiLocationResponse[]>('/geo/1.0/direct', {
 			q: query,
-		});
+		}).pipe(
+			map((res) => {
+				if (res.length < 1) {
+					throw new Error('Location not Found');
+				}
+				return res[0];
+			})
+		);
 	}
 
-	protected override get<T>(
-		endpoint: string,
-		params: { [prop: string]: any }
-	): Observable<T> {
+	protected override get<T>(endpoint: string, params: { [prop: string]: any }): Observable<T> {
 		params = { ...params, appid: this.appid };
 		return super.get(endpoint, params);
 	}

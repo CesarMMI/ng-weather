@@ -74,11 +74,8 @@ export class NextWeathersComponent {
 				},
 				y: {
 					display: false,
-					beginAtZero: false,
 					min: Math.min(...temperatures) - 2,
 					max: Math.max(...temperatures) + 2,
-					grid: { display: false },
-					ticks: { display: false },
 				},
 			},
 		} as ChartOptions;
