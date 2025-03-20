@@ -1,9 +1,6 @@
 import { computed, inject, Injectable, Signal, signal } from '@angular/core';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { filter, forkJoin, switchMap } from 'rxjs';
-import { environment } from '../../../environments/environment';
-import { HttpService } from '../../shared/services/http.service';
-import { WeatherApiCords } from '../types/weather-api/weather-api';
 import { WeatherApiCurrentResponse } from '../types/weather-api/weather-api-current';
 import { WeatherApiForecastResponse } from '../types/weather-api/weather-api-forecast';
 import { Forecast } from '../types/weather/forecast';
@@ -24,43 +21,44 @@ export class WeatherService {
 	private _temperature = signal<Temperature>(new Temperature('celsius'));
 	// Getters
 	current: Signal<Weather | undefined> = computed(() => {
-		return this.getWeather(this._temperature(),this._current())
+		return this.getWeather(this._temperature(), this._current());
 	});
 	current$ = toObservable(this._current);
 
 	forecast: Signal<Forecast[] | undefined> = computed(() => {
-		return this.getForecastList(this._temperature(),this._forecast());
+		return this.getForecastList(this._temperature(), this._forecast());
 	});
-	
+
 	temperatureType = computed(() => this._temperature().type);
 
 	constructor() {
 		// Reducers
-		this.locationService.cords$.pipe(
-			filter(Boolean),
-			switchMap((search) => forkJoin({
-				current: this.weatherApiService.getWeather(search),
-				forecast: this.weatherApiService.getForecast(search),
-			})),
-			takeUntilDestroyed()
-		).subscribe((res) => {
-			// Current
-			this._current.set({ ...res.current, dt: new Date(res.current.dt) });
-			this._forecast.set(res.forecast);
-			// Forecast
-			const locationName = `${res.current.name} / ${res.current.sys.country}`
-			this.locationService.setLocationName(locationName);
-		});
+		this.locationService.cords$
+			.pipe(
+				filter(Boolean),
+				switchMap((search) =>
+					forkJoin({
+						current: this.weatherApiService.getWeather(search),
+						forecast: this.weatherApiService.getForecast(search),
+					})
+				),
+				takeUntilDestroyed()
+			)
+			.subscribe((res) => {
+				// Current
+				this._current.set({ ...res.current, dt: new Date(res.current.dt) });
+				this._forecast.set(res.forecast);
+				// Forecast
+				const locationName = `${res.current.name} / ${res.current.sys.country}`;
+				this.locationService.setLocationName(locationName);
+			});
 	}
 
 	setTemperatureType(type: TemperatureType) {
 		this._temperature.set(new Temperature(type));
 	}
 
-	private getWeather(
-		temperature: Temperature,
-		weather?: WeatherApiCurrentResponse
-	) {
+	private getWeather(temperature: Temperature, weather?: WeatherApiCurrentResponse) {
 		if (!weather) return;
 
 		return {
@@ -71,10 +69,7 @@ export class WeatherService {
 		};
 	}
 
-	private getForecastList(
-		temperature: Temperature,
-		forecast?: WeatherApiForecastResponse,
-	) {
+	private getForecastList(temperature: Temperature, forecast?: WeatherApiForecastResponse) {
 		if (!forecast) return;
 
 		const result: Forecast[] = [];

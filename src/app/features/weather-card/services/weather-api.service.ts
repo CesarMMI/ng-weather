@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 import { map, Observable, throwError } from 'rxjs';
-import { environment } from '../../../environments/environment';
-import { HttpService } from '../../shared/services/http.service';
+import { HttpService } from '../../../shared/services/http.service';
 import { WeatherApiCords } from '../types/weather-api/weather-api';
 import { WeatherApiCurrentResponse } from '../types/weather-api/weather-api-current';
 import { WeatherApiForecastResponse } from '../types/weather-api/weather-api-forecast';
 import { WeatherApiLocationResponse } from '../types/weather-api/weather-api-location';
+import { environment } from '../../../../environments/environment';
 
 @Injectable({
 	providedIn: 'root',

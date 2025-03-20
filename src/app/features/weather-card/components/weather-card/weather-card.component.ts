@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
-import { GlassmorphismDirective } from '../shared/directives/glassmorphism.directive';
-import { CurrentWeatherComponent } from './components/current-weather/current-weather.component';
-import { LocationInputComponent } from './components/location-input/location-input.component';
-import { NextWeathersComponent } from './components/next-weathers/next-weathers.component';
+import { GlassmorphismDirective } from '../../../../shared/directives/glassmorphism.directive';
+import { CurrentWeatherComponent } from '../current-weather/current-weather.component';
+import { LocationInputComponent } from '../location-input/location-input.component';
+import { NextWeathersComponent } from '../next-weathers/next-weathers.component';
 
 @Component({
 	selector: 'app-weather-card',

@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import { BackgroundImageComponent } from './background-image/components/background-image/background-image.component';
-import { WeatherCardComponent } from './weather-card/weather-card.component';
+import { BackgroundImageComponent } from './features/background-image/components/background-image.component';
+import { WeatherCardComponent } from './features/weather-card/components/weather-card/weather-card.component';
 
 @Component({
   selector: 'app-root',

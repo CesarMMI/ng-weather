@@ -9,8 +9,11 @@ import { Forecast } from '../../types/weather/forecast';
 	selector: 'app-next-weathers',
 	providers: [DatePipe],
 	imports: [BaseChartDirective],
-	templateUrl: './next-weathers.component.html',
-	styleUrl: './next-weathers.component.scss',
+	template: `
+		@if (chart(); as chart) {
+		<canvas baseChart type="line" [data]="chart.data" [options]="chart.options"></canvas>
+		}
+	`,
 })
 export class NextWeathersComponent {
 	private datePipe = inject(DatePipe);

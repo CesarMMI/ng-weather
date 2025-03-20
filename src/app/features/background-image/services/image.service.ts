@@ -1,12 +1,11 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
-import { environment } from '../../../environments/environment';
-import { HttpService } from '../../shared/services/http.service';
-import { RandomImageResponse } from '../types/random-image';
-import { WeatherApiService } from '../../weather-card/services/weather-api.service';
-import { WeatherService } from '../../weather-card/services/weather.service';
-import { filter, map, switchMap, takeUntil } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { filter, switchMap } from 'rxjs';
+import { environment } from '../../../../environments/environment';
+import { HttpService } from '../../../shared/services/http.service';
+import { WeatherService } from '../../weather-card/services/weather.service';
 import { WeatherApiCurrentResponse } from '../../weather-card/types/weather-api/weather-api-current';
+import { RandomImageResponse } from '../types/random-image';
 
 @Injectable({
 	providedIn: 'root',
@@ -25,13 +24,15 @@ export class ImageService extends HttpService {
 	constructor() {
 		super();
 		// Reducers
-		this.weatherService.current$.pipe(
-			filter((weather) => !!weather && weather.weather.length > 0),
-			switchMap((weather) => this.getRandom(this.getQuery(weather!))),
-			takeUntilDestroyed()
-		).subscribe((res) => {
-			this._imageUrl.set(res.urls.regular);
-		});
+		this.weatherService.current$
+			.pipe(
+				filter((weather) => !!weather && weather.weather.length > 0),
+				switchMap((weather) => this.getRandom(this.getQuery(weather!))),
+				takeUntilDestroyed()
+			)
+			.subscribe((res) => {
+				this._imageUrl.set(res.urls.regular);
+			});
 	}
 
 	private getQuery(weather: WeatherApiCurrentResponse) {

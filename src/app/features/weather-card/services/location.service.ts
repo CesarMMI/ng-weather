@@ -2,7 +2,7 @@ import { computed, inject, Injectable, signal } from '@angular/core';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { catchError, distinctUntilChanged, EMPTY, Subject, switchMap } from 'rxjs';
 import { fromPromise } from 'rxjs/internal/observable/innerFrom';
-import { StorageService } from '../../shared/services/storage.service';
+import { StorageService } from '../../../shared/services/storage.service';
 import { WeatherApiCords } from '../types/weather-api/weather-api';
 import { WeatherApiService } from './weather-api.service';
 
