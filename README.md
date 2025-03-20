@@ -1,6 +1,11 @@
 # NgWeather
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.0.5.
+This is a portfolio project built with Angular that showcases the integration of external APIs to create a dynamic and visually appealing weather app.  
+
+- [**Weather API** for real-time weather data](https://openweathermap.org/api) 
+- [**Unsplash API** for dynamic background images](https://unsplash.com/developers)
+
+This project demonstrates API integration, reactive programming with Angular, and UI/UX design principles. 🚀
 
 ## Environment
 
