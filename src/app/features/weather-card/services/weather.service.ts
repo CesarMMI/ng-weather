@@ -20,14 +20,9 @@ export class WeatherService {
 	private _forecast = signal<WeatherApiForecastResponse | undefined>(undefined);
 	private _temperature = signal<Temperature>(new Temperature('celsius'));
 	// Getters
-	current: Signal<Weather | undefined> = computed(() => {
-		return this.getWeather(this._temperature(), this._current());
-	});
+	current: Signal<Weather | undefined> = computed(() => this.getWeather(this._temperature(), this._current()));
 	current$ = toObservable(this._current);
-
-	forecast: Signal<Forecast[] | undefined> = computed(() => {
-		return this.getForecastList(this._temperature(), this._forecast());
-	});
+	forecast: Signal<Forecast[] | undefined> = computed(() => this.getForecastList(this._temperature(), this._forecast()));
 
 	temperatureType = computed(() => this._temperature().type);
 

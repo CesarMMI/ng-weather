@@ -4,6 +4,7 @@ import { ChartConfiguration, ChartData, ChartOptions, TooltipItem } from 'chart.
 import { BaseChartDirective } from 'ng2-charts';
 import { WeatherService } from '../../services/weather.service';
 import { Forecast } from '../../types/weather/forecast';
+import { Temperature } from '../../types/weather/temperature';
 
 @Component({
 	selector: 'app-next-weathers',
@@ -22,13 +23,28 @@ export class NextWeathersComponent {
 	private forecast = this.weatherService.forecast;
 
 	chart = computed(() => {
-		const forecast = this.forecast();
-		if (!forecast) return;
+		let forecast = this.forecast();
+		if (!forecast) forecast = this.getForecastSkeleton();
+
 		return {
 			data: this.getChartData(forecast),
 			options: this.getChartOptions(forecast),
 		} as ChartConfiguration;
 	});
+
+	private getForecastSkeleton(): Forecast[] {
+		const res = [];
+		for (let i = 0; i < 6; i++) {
+			const date = new Date();
+			date.setHours(0, 0, 0, 0);
+			date.setDate(date.getDate() + i);
+			res.push({
+				date,
+				temperature: new Temperature('celsius', Math.random() * 100),
+			});
+		}
+		return res;
+	}
 
 	private getChartData(forecast: Forecast[]) {
 		return {

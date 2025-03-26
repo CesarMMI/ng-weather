@@ -1,8 +1,7 @@
-@if (weather();as weather) {
 <div class="flex justify-between items-end h-full">
 	<div class="flex items-center gap-2">
-		<span class="text-8xl font-semibold">
-			{{ weather.temperature.value }}
+		<span [appSkeleton]="!weather()" class="text-8xl font-semibold">
+			{{ weather()?.temperature?.value ?? 99 }}
 		</span>
 		<div class="grid gap-1">
 			<div
@@ -24,20 +23,20 @@
 	<div class="grid grid-cols-2">
 		<span class="text-neutral-300">Nuvens</span>
 		<span class="text-right">
-			<span class="font-semibold text-lg mr-1">{{ weather.clouds }}</span>
+			<span [appSkeleton]="!weather()" class="font-semibold text-lg mr-1">{{ weather()?.clouds ?? 100 }}</span>
 			<span class="text-neutral-300">%</span>
 		</span>
 
 		<span class="text-neutral-300">Humidade</span>
 		<span class="text-right">
-			<span class="font-semibold text-lg mr-1">{{ weather.humidity }}</span>
+			<span [appSkeleton]="!weather()" class="font-semibold text-lg mr-1">{{ weather()?.humidity ?? 100 }}</span>
 			<span class="text-neutral-300">%</span>
 		</span>
+
 		<span class="text-neutral-300">Vento</span>
 		<span class="text-right">
-			<span class="font-semibold text-lg mr-1">{{ weather.wind }}</span>
+			<span [appSkeleton]="!weather()" class="font-semibold text-lg mr-1">{{ weather()?.wind ?? 100 }}</span>
 			<span class="text-neutral-300">Km/h</span>
 		</span>
 	</div>
 </div>
-}
